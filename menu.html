@@ -1,0 +1,27 @@
+<div class="pure-menu pure-menu-horizontal">
+    <ul class="pure-menu-list">
+        <li class="pure-menu-item pure-menu-selected">
+            <a href="<?= home_url ?>" class="pure-menu-link">Home</a>
+        </li>
+        <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            <a href="<?= home_url ?>?page=settings_general" id="menuLink1" class="pure-menu-link">Settings</a>
+            <ul class="pure-menu-children">
+                <li class="pure-menu-item">
+                    <a href="<?= home_url ?>?page=settings_general" class="pure-menu-link">General</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="<?= home_url ?>?page=settings_admin" class="pure-menu-link">Admin</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="<?= home_url ?>?page=settings_cleaners" class="pure-menu-link">Cleaners</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="<?= home_url ?>?page=settings_twilio" class="pure-menu-link">Twilio</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="<?= home_url ?>?page=settings_things" class="pure-menu-link">SmartThings</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

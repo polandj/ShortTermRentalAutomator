@@ -1,0 +1,14 @@
+Hi,
+
+Please move the <?= properties.getProperty('site_name') ?> cleaning scheduled for <?= formatDate(oldrecord.checkout) ?> to <?= formatDate(record.checkout) ?>.
+
+The <?= record.guests ?> are now staying <?= formatDate(record.checkin) ?> through <?= formatDate(record.checkout) ?>.
+
+
+You can always see the latest complete calendar of reservations at:
+
+https://calendar.google.com/calendar/embed?src=<?= gmail_addr ?>
+
+Thanks!
+
+<?= properties.getProperty('email_signature') ?>
