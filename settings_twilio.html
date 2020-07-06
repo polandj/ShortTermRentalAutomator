@@ -15,10 +15,10 @@
        </div>
  
        <form class="column col-8 col-md-10 col-sm-12 col-mx-auto form-horizontal" onsubmit="handleFormSubmit(this)">
-         <?!= input_field('twilio_acct', 'Account', 'text') ?>
-         <?!= input_field('twilio_sid', 'SID', 'text') ?>
-         <?!= input_field('twilio_tok', 'Token', 'text') ?>
-         <?!= input_field('twilio_phone', 'Phone', 'tel') ?>
+         <?!= input_field('twilio_acct', 'Account', 'text', {hint: 'Available on Twilio dashboard'}) ?>
+         <?!= input_field('twilio_sid', 'SID', 'text', {hint: 'Available in Settings -> API keys'}) ?>
+         <?!= input_field('twilio_tok', 'Token', 'text', {hint: 'Available in Settings -> API keys'}) ?>
+         <?!= input_field('twilio_phone', 'Phone', 'tel', {pattern: "^\\+1[0-9]{10}$"}) ?>
        
          <?!= include('submit_form') ?>
       </form>

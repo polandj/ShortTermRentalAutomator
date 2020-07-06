@@ -11,6 +11,9 @@
       <? if (pattern) { ?>
         pattern="<?= pattern ?>"
       <? } ?>
+      <? if (maxlength) { ?>
+        maxlength="<?= maxlength ?>"
+      <? } ?>
       rows="5"><?= properties.getProperty(propname) ?></textarea>
     <? } else if (proptype == 'switch') { ?>
       <label class="form-switch">
@@ -25,6 +28,9 @@
       <? } ?>
       <? if (pattern) { ?>
         pattern="<?= pattern ?>"
+      <? } ?>
+      <? if (maxlength) { ?>
+        maxlength="<?= maxlength ?>"
       <? } ?>
       />
     <? } ?>

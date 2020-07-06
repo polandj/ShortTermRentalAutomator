@@ -14,12 +14,13 @@ function include(filename) {
 
 /* Template for a typical styled HTML input field */
 function input_field(propname, proplabel, proptype, {
-                     pattern = '', hint = '', required=false} = {}) {
+                     maxlength = '', pattern = '', hint = '', required=false} = {}) {
   var templ = HtmlService.createTemplateFromFile('input_field')
   templ.properties = PropertiesService.getUserProperties()
   templ.propname = propname
   templ.proplabel = proplabel
   templ.proptype = proptype
+  templ.maxlength = maxlength
   templ.pattern = pattern
   templ.hint = hint
   templ.required = required
@@ -89,12 +90,14 @@ function saveReservation(formObject) {
   var descr = `Guests: ${guests}\r\nPhone: ${phone}`
   var properties = PropertiesService.getUserProperties()
   var event
-  if (properties.getProperty('master_switch') == 'on') {
+  if (properties.getProperty('master_switch') == 'on' || 
+      properties.getProperty('admin_phone') == phone) {
     event = CalendarApp.getDefaultCalendar().createEvent(name, 
                   start_date, stop_date, 
                   {description: descr})
     var mins_til_start = (start_date.getTime() - now.getTime())/1000/60
     event.addEmailReminder(Math.min(mins_til_start - 10, 10080)) // 1 week or a few minutes from now
+    console.info("Created " + name + " calendar event: " + checkin + " - " + checkout)
   } else {
     console.info("[TESTING] Skipped creating " + name + " calendar event: " + checkin + " - " + checkout)
   }

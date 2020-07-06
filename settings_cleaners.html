@@ -16,7 +16,7 @@
        
        <form class="column col-8 col-md-10 col-sm-12 col-mx-auto form-horizontal" onsubmit="handleFormSubmit(this)">
          <?!= input_field('cleaner_email', 'Email', 'email') ?>
-         <?!= input_field('cleaner_phone', 'Phone', 'tel') ?>
+         <?!= input_field('cleaner_phone', 'Phone', 'tel', {pattern: "^\\+1[0-9]{10}$"}) ?>
          
          <?!= include('submit_form') ?>
         </form>

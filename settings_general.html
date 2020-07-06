@@ -15,10 +15,11 @@
      </div>
      <form class="column col-8 col-md-10 col-sm-12 col-mx-auto form-horizontal" onsubmit="handleFormSubmit(this)">
        <?!= input_field('site_name', 'Site Name', 'text') ?>
-       <?!= input_field('mail_from', 'Email From', 'email') ?>
        <?!= input_field('checkin_time', 'Check-In Time', 'time') ?>
        <?!= input_field('checkout_time', 'Check-Out Time', 'time') ?>
-       <?!= input_field('guest_text', 'Guest Text', 'textarea') ?>
+       <?!= input_field('guest_text', 'Guest Text', 'textarea', 
+           {maxlength: 160, hint: 'This is the first text sent to the guest, when the calendar notifies us of upcoming stay'}) ?>
+       <?!= input_field('mail_from', 'Email From', 'email') ?>
        <?!= input_field('email_signature', 'Email Signature', 'textarea') ?>
        
        <?!= input_field('master_switch', 'Production', 'switch') ?>

@@ -9,6 +9,8 @@
   <?!= include('scripts') ?>
   <script>
     function handleReservationSubmit(formObject) {
+      var div = document.getElementById('output')
+      div.innerHTML = "Booking..."
       google.script.run.withSuccessHandler(handleResult).saveReservation(formObject);
     }
    </script>
@@ -25,7 +27,7 @@
        
        <form class="column col-8 col-md-10 col-sm-12 col-mx-auto form-horizontal" onsubmit="handleReservationSubmit(this)">
          <?!= input_field('name', 'Name', 'text', {required:true}) ?>
-         <?!= input_field('phone', 'Phone', 'tel', {required:true, pattern: "^[0-9]{10}$"}) ?>
+         <?!= input_field('phone', 'Phone', 'tel', {required:true, pattern: "^\\+1[0-9]{10}$"}) ?>
          <?!= input_field('guests', 'Guests', 'text', {required:true, pattern: "^[0-9] adults.*$"}) ?>
          <?!= input_field('checkin', 'Check-In', 'date', {required:true}) ?>
          <?!= input_field('checkout', 'Check-Out', 'date', {required:true}) ?>

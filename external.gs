@@ -41,6 +41,10 @@ function prune_properties() {
 }
 
 function send_email(to, subject, txt, htm) {
+  if (!to) {
+    console.warn(`send_email called with empty TO`)
+    return
+  }
   var properties = PropertiesService.getUserProperties()
   if (properties.getProperty('master_switch') == 'on' ||
       properties.getProperty('admin_email') == to) {
@@ -48,7 +52,7 @@ function send_email(to, subject, txt, htm) {
     if (properties.getProperty('mail_from')) {
       options.from = properties.getProperty('mail_from')
     }
-    if (html) {
+    if (htm) {
       options.htmlBody = htm
     }
     GmailApp.sendEmail(to, subject, txt, options)
@@ -60,6 +64,14 @@ function send_email(to, subject, txt, htm) {
 }
 
 function send_sms(to, msg) {
+  if (!to) {
+    console.warn(`send_sms called with empty TO`)
+    return
+  }
+  if (!msg || msg.length == 0) {
+    console.warn(`send_sms called with empty MSG`)
+    return
+  }
   if (msg.length > 160) {
     console.error(`SMS text to ${to} too long (${msg.length})`)
     return
@@ -70,6 +82,11 @@ function send_sms(to, msg) {
   var authSID = properties.getProperty('twilio_sid')
   var authToken = properties.getProperty('twilio_tok')
   var from = properties.getProperty('twilio_phone')
+  
+  if (!account || !authSID || !authToken || !from) {
+    console.error(`send_sms called but twilio is not fully configured`)
+    return
+  }
 
   var url = "https://api.twilio.com/2010-04-01/Accounts/" + account + "/Messages.json"
 
@@ -79,8 +96,8 @@ function send_sms(to, msg) {
       Authorization: "Basic " + Utilities.base64Encode(authSID + ":" + authToken)
     },
     payload: {
-      "From" : from,
-      "To"   : to,
+      "From" : "+1" + from.replace(/\D/g, '').slice(-10),
+      "To"   : "+1" + to.replace(/\D/g, '').slice(-10),
       "Body" : msg
     },
     muteHttpExceptions: true
