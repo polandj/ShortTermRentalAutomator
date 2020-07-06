@@ -16,7 +16,7 @@ function getNewCalendarMessages()
 {
   var threads
   var properties = PropertiesService.getUserProperties()
-  if (properties.getProperty('deploy_mode') == 'production') {
+  if (properties.getProperty('master_switch') == 'on') {
     threads = GmailApp.search("newer_than:" + NEWER_THAN + " AND from:" + CAL_FROM_MATCH + 
                               " AND subject:" + CAL_SUBJ_MATCH + " AND -label:" + CAL_DONE_LABEL)
   } else {
@@ -97,7 +97,7 @@ function processCalendarEmails()
 function labelCalendarMessageDone(message)
 {
   var properties = PropertiesService.getUserProperties()
-  if (properties.getProperty('deploy_mode') == 'production') {
+  if (properties.getProperty('master_switch') == 'on') {
     var label_obj = GmailApp.getUserLabelByName(CAL_DONE_LABEL)
     if(!label_obj) {
       label_obj = GmailApp.createLabel(CAL_DONE_LABEL)

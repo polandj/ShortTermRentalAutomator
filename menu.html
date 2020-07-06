@@ -1,27 +1,23 @@
-<div class="pure-menu pure-menu-horizontal">
-    <ul class="pure-menu-list">
-        <li class="pure-menu-item pure-menu-selected">
-            <a href="<?= home_url ?>" class="pure-menu-link">Home</a>
-        </li>
-        <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
-            <a href="<?= home_url ?>?page=settings_general" id="menuLink1" class="pure-menu-link">Settings</a>
-            <ul class="pure-menu-children">
-                <li class="pure-menu-item">
-                    <a href="<?= home_url ?>?page=settings_general" class="pure-menu-link">General</a>
-                </li>
-                <li class="pure-menu-item">
-                    <a href="<?= home_url ?>?page=settings_admin" class="pure-menu-link">Admin</a>
-                </li>
-                <li class="pure-menu-item">
-                    <a href="<?= home_url ?>?page=settings_cleaners" class="pure-menu-link">Cleaners</a>
-                </li>
-                <li class="pure-menu-item">
-                    <a href="<?= home_url ?>?page=settings_twilio" class="pure-menu-link">Twilio</a>
-                </li>
-                <li class="pure-menu-item">
-                    <a href="<?= home_url ?>?page=settings_things" class="pure-menu-link">SmartThings</a>
-                </li>
-            </ul>
-        </li>
-    </ul>
-</div>
+<header class="navbar" style="background-color: aliceblue">
+  <section class="navbar-section">
+    <a href="<?= home_url ?>" class="btn btn-link">New</a>
+  </section>
+  <section class="navbar-center">
+    <b>730 Maplegate</b>
+  </section>
+  <section class="navbar-section">
+    <div class="dropdown dropdown-right">
+      <a href="<?= home_url ?>" class="btn btn-link dropdown-toggle" tabindex="0">
+      Settings <i class="icon icon-caret"></i>
+      </a>
+        <!-- menu component -->
+       <ul class="menu">
+         <li><a href="<?= home_url ?>?page=settings_general">General</a></li>
+         <li><a href="<?= home_url ?>?page=settings_admin">Admin</a></li>
+         <li><a href="<?= home_url ?>?page=settings_cleaners">Cleaners</a></li>
+         <li><a href="<?= home_url ?>?page=settings_twilio">Twilio</a></li>
+         <li><a href="<?= home_url ?>?page=settings_things">SmartThings</a></li>
+       </ul>
+    </div>
+  </section>
+</header>

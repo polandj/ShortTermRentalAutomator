@@ -13,12 +13,15 @@ function include(filename) {
 }
 
 /* Template for a typical styled HTML input field */
-function input_field(propname, proplabel, proptype, required) {
+function input_field(propname, proplabel, proptype, {
+                     pattern = '', hint = '', required=false} = {}) {
   var templ = HtmlService.createTemplateFromFile('input_field')
   templ.properties = PropertiesService.getUserProperties()
   templ.propname = propname
   templ.proplabel = proplabel
   templ.proptype = proptype
+  templ.pattern = pattern
+  templ.hint = hint
   templ.required = required
   return templ.evaluate().getContent()
 }
@@ -86,7 +89,7 @@ function saveReservation(formObject) {
   var descr = `Guests: ${guests}\r\nPhone: ${phone}`
   var properties = PropertiesService.getUserProperties()
   var event
-  if (properties.getProperty('deploy_mode') == 'production') {
+  if (properties.getProperty('master_switch') == 'on') {
     event = CalendarApp.getDefaultCalendar().createEvent(name, 
                   start_date, stop_date, 
                   {description: descr})
@@ -107,6 +110,7 @@ function saveSettings(formObject) {
     properties.setProperty(key, value)
     retval[key] = value
   }
+  console.info(retval)
   return retval
 }
 

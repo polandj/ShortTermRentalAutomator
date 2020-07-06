@@ -17,7 +17,7 @@ function getNewVRBOMessages()
 {
   var threads
   var properties = PropertiesService.getUserProperties()
-  if (properties.getProperty('deploy_mode') == 'production') {
+  if (properties.getProperty('master_switch') == 'on') {
     threads = GmailApp.search("newer_than:" + NEWER_THAN + " AND from:" + VRBO_FROM_MATCH + 
                               " AND subject:" + VRBO_SUBJ_MATCH + " AND -label:" + VRBO_DONE_LABEL)
   } else {
@@ -79,7 +79,7 @@ function processVRBOEmails()
 function labelVRBOMessageDone(message)
 {
   var properties = PropertiesService.getUserProperties()
-  if (properties.getProperty('deploy_mode') == 'production') {
+  if (properties.getProperty('master_switch') == 'on') {
     var label_obj = GmailApp.getUserLabelByName(VRBO_DONE_LABEL)
     if(!label_obj) {
       label_obj = GmailApp.createLabel(VRBO_DONE_LABEL)

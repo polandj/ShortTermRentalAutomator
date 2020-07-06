@@ -42,7 +42,7 @@ function prune_properties() {
 
 function send_email(to, subject, txt, htm) {
   var properties = PropertiesService.getUserProperties()
-  if (properties.getProperty('deploy_mode') == 'production' ||
+  if (properties.getProperty('master_switch') == 'on' ||
       properties.getProperty('admin_email') == to) {
     var options = {}
     if (properties.getProperty('mail_from')) {
@@ -86,7 +86,7 @@ function send_sms(to, msg) {
     muteHttpExceptions: true
   }
 
-  if (properties.getProperty('deploy_mode') == 'production' ||
+  if (properties.getProperty('master_switch') == 'on' ||
       properties.getProperty('admin_phone') == to) {
     var response = JSON.parse(UrlFetchApp.fetch(url, options).getContentText())
     if (response.hasOwnProperty("sid")) {
@@ -124,7 +124,7 @@ function schedule_lock(name, phone, checkin, checkout, guests) {
     payload: JSON.stringify(data),
     muteHttpExceptions: true
   }
-  if (properties.getProperty('deploy_mode') == 'production') {
+  if (properties.getProperty('master_switch') == 'on') {
     var response = UrlFetchApp.fetch(url, options)
     console.log("lock manager response code: " + response.getResponseCode())    
   } else {

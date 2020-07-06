@@ -11,8 +11,29 @@
   window.addEventListener('load', preventFormSubmit)
 
   function handleFormSubmit(formObject) {
+    var div = document.getElementById('output')
+    div.innerHTML = "Saving..."
+    // Special handling for checkboxes to always send on or off
+    var inputs = document.querySelectorAll("input[type='checkbox']")
+    for(var i = 0; i < inputs.length; i++) {
+      // Remove any previously hidden inputs with the same name
+      var hiddens = document.querySelectorAll(`input[type='hidden'][name='${inputs[i].name}']`)
+      for(var j = 0; j < hiddens.length; j++) {
+        formObject.removeChild(hiddens[j])
+      }
+      if (!inputs[i].checked) {
+        // Add a hidden input if the box is not checked
+        var input = document.createElement("input")
+        input.setAttribute("type", "hidden")
+        input.setAttribute("name", inputs[i].name)
+        input.setAttribute("value", 'off')
+        console.log(`${inputs[i].name} - ${inputs[i].checked}`)
+        formObject.appendChild(input)
+      } 
+    }
     google.script.run.withSuccessHandler(handleResult).saveSettings(formObject)
   }
+  
   function handleResult(result) {
     var div = document.getElementById('output')
     if (result.status == 'error') {
@@ -20,6 +41,10 @@
     } else {
       div.innerHTML = result.status
     }
+    // Remove msg after short period
+    setTimeout(function(){ 
+      div.innerHTML = ""
+    }, 3000)
   }
 </script>
 
