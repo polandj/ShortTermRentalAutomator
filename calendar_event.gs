@@ -59,26 +59,30 @@ function processEvents(events, properties) {
           console.log(diff)
           if (diff.checkout) {
             notify_cleaners("cal-upd-email", "Move cleaning", rec, oldrec)
+            if (oldrec.lock_scheduled) {
+              edit_lock(oldrec.name, oldrec.phone, oldrec.checkin, oldrec.checkout, oldrec.guests)
+            }
           }
         }
-        // TODO 
-        // - mail cleaners if dates changed
-        // - Call groovy if on lock ?
+        
       } else {
         console.log("New event[%s]: %s", event.id, event.summary)
         notify_cleaners("cal-new-email", "New cleaning", rec)
-        // TODO - mail cleaners / call groovy if on lock?
+        // Don't add to lock now, this gets added to the lock later, when the calendar notification arrives
       }
       properties.setProperty(event.id, JSON.stringify(rec))
     } else if (oldrec) {
       if (event.status === 'cancelled') {
-        console.log('Event id %s was cancelled.', event.id);
-        // TODO - mail cleaners / call groovy if on lock?
+        properties.deleteProperty(event.id)
+        console.log('Event id %s was cancelled.', event.id)
         notify_cleaners("cal-del-email", "Cancel cleaning", oldrec)
+        if (oldrec.lock_scheduled) {
+          cancel_lock(oldrec.phone)
+        }
       }
     }
     else {
-      console.error('Non-parsable reservation? ' + event.summary)
+      console.error('Non-parsable or deleting of unseen reservation? ' + event.summary)
     }
   }
 }

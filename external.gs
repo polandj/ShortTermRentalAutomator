@@ -103,18 +103,11 @@ function formatDate(dv) {
   return Utilities.formatDate(ddv, tz, 'MMM dd, yyyy')
 }
 
-function schedule_lock(name, phone, checkin, checkout, guests) {
+function call_lock(uri, data) {
   var properties = PropertiesService.getUserProperties()
-  var lm_url = properties.getProperty('lock_manager_url')
+  var lm_url = properties.getProperty('lock_manager_url') + uri
   var lm_auth = properties.getProperty('lock_manager_auth')
   
-  var data = {
-    "name": name,
-    "phone": phone,
-    "checkin": formatDate(checkin),
-    "checkout": formatDate(checkout),
-    "guests": guests
-  }
   var options = {
     method: "POST",
     contentType: 'application/json',
@@ -128,8 +121,37 @@ function schedule_lock(name, phone, checkin, checkout, guests) {
     var response = UrlFetchApp.fetch(url, options)
     console.log("lock manager response code: " + response.getResponseCode())    
   } else {
-    console.log(`[TESTING] Skipped adding lock code for  ${name}(${phone}) staying ${checkin} to ${checkout} with ${guests}`)
+    console.log(`[TESTING] Skipped calling lock api for ${JSON.stringify(data)}`)
   }
+}
+  
+function schedule_lock(name, phone, checkin, checkout, guests) {
+  var data = {
+    "name": name,
+    "phone": phone,
+    "checkin": formatDate(checkin),
+    "checkout": formatDate(checkout),
+    "guests": guests
+  }
+  call_lock('/reservation', data)
+}
+
+function edit_lock(name, phone, checkin, checkout, guests) {
+  var data = {
+    "name": name,
+    "phone": phone,
+    "checkin": formatDate(checkin),
+    "checkout": formatDate(checkout),
+    "guests": guests
+  }
+  call_lock('/edit', data)
+}
+
+function cancel_lock(phone) {
+  var data = {
+    "phone": phone
+  }
+  call_lock('/cancel', data)
 }
 
 /*
