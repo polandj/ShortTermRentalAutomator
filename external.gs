@@ -3,7 +3,7 @@
  * ================================================
  */
 
-/*  Clean up old properties
+/*  Clean up old reservations
  *  https://developers.google.com/apps-script/guides/services/quotas
  *  Properties value size: 9kB per value
  *  Properties total storage: 500kB per property store
@@ -11,7 +11,7 @@
  *  Event IDs have lowercase letters a-v and digits 0-9
  *  e.g. "dnu5a0env4sl3i4a231qg703f0"
  */
-function prune_properties() {
+function prune_reservations() {
   var properties = PropertiesService.getUserProperties()
   var keys = properties.getKeys()
   console.info(`${keys.length} Properties`)
@@ -23,7 +23,7 @@ function prune_properties() {
       var keyval = properties.getProperty(keys[i])
       try {
         var rec = JSON.parse(keyval)
-        if (rec.checkout && rec.checkout < now) {
+        if (rec.checkout && Date.parse(rec.checkout) < now) {
           properties.deleteProperty(keys[i])
           console.info(`Removed old event property ${keys[i]}: ${rec.name}`)
         } else if (!rec.checkout) {
@@ -41,9 +41,10 @@ function prune_properties() {
 }
 
 function send_email(to, subject, txt, htm) {
+  var retval = false
   if (!to) {
     console.warn(`send_email called with empty TO`)
-    return
+    return retval
   }
   var properties = PropertiesService.getUserProperties()
   if (properties.getProperty('master_switch') == 'on' ||
@@ -56,25 +57,28 @@ function send_email(to, subject, txt, htm) {
       options.htmlBody = htm
     }
     GmailApp.sendEmail(to, subject, txt, options)
+    retval = true
   } else {
     console.info('[TESTING] Skipped sending mail to ' + to + ': ' + subject)
     console.info('[TESTING]' + txt)
     console.info('[TESTING]' + htm)
   }
+  return retval
 }
 
 function send_sms(to, msg) {
+  var retval = false
   if (!to) {
     console.warn(`send_sms called with empty TO`)
-    return
+    return retval
   }
   if (!msg || msg.length == 0) {
     console.warn(`send_sms called with empty MSG`)
-    return
+    return retval
   }
   if (msg.length > 160) {
     console.error(`SMS text to ${to} too long (${msg.length})`)
-    return
+    return retval
   }
   
   var properties = PropertiesService.getUserProperties()
@@ -85,7 +89,7 @@ function send_sms(to, msg) {
   
   if (!account || !authSID || !authToken || !from) {
     console.error(`send_sms called but twilio is not fully configured`)
-    return
+    return retval
   }
 
   var url = "https://api.twilio.com/2010-04-01/Accounts/" + account + "/Messages.json"
@@ -108,10 +112,12 @@ function send_sms(to, msg) {
     var response = JSON.parse(UrlFetchApp.fetch(url, options).getContentText())
     if (response.hasOwnProperty("sid")) {
       console.info(`SMS sent to ${to}`) 
+      retval = true
     }
   } else {
     console.info('[TESTING] Skipped sending SMS to ' + to)
   }
+  return retval
 }
 
 function formatDate(dv) {
@@ -124,6 +130,7 @@ function call_lock(uri, data) {
   var properties = PropertiesService.getUserProperties()
   var lm_url = properties.getProperty('lock_manager_url') + uri
   var lm_auth = properties.getProperty('lock_manager_auth')
+  var retval = false
   
   var options = {
     method: "POST",
@@ -134,12 +141,17 @@ function call_lock(uri, data) {
     payload: JSON.stringify(data),
     muteHttpExceptions: true
   }
-  if (properties.getProperty('master_switch') == 'on') {
-    var response = UrlFetchApp.fetch(url, options)
-    console.log("lock manager response code: " + response.getResponseCode())    
+  if (properties.getProperty('master_switch') == 'on' ||
+      properties.getProperty('admin_phone') == data.phone) {
+    var response = UrlFetchApp.fetch(lm_url, options)
+    console.log("lock manager response code: " + response.getResponseCode())
+    if (response.getResponseCode() == 201) {
+      retval = true 
+    }
   } else {
     console.log(`[TESTING] Skipped calling lock api for ${JSON.stringify(data)}`)
   }
+  return retval
 }
   
 function schedule_lock(name, phone, checkin, checkout, guests) {
@@ -150,7 +162,7 @@ function schedule_lock(name, phone, checkin, checkout, guests) {
     "checkout": formatDate(checkout),
     "guests": guests
   }
-  call_lock('/reservation', data)
+  return call_lock('/reservation', data)
 }
 
 function edit_lock(name, phone, checkin, checkout, guests) {
@@ -161,14 +173,14 @@ function edit_lock(name, phone, checkin, checkout, guests) {
     "checkout": formatDate(checkout),
     "guests": guests
   }
-  call_lock('/edit', data)
+  return call_lock('/edit', data)
 }
 
 function cancel_lock(phone) {
   var data = {
     "phone": phone
   }
-  call_lock('/cancel', data)
+  return call_lock('/cancel', data)
 }
 
 /*

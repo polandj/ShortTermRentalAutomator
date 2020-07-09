@@ -63,18 +63,30 @@ function parseCalendarMessages(messages)
       if (!oldrec || !oldrec.guest_welcomed) {
         var guest_text = properties.getProperty('guest_text')
         if (guest_text) {  
-          send_sms(rec.phone, guest_text)
-          rec.guest_welcomed = true
+          rec.guest_welcomed = send_sms(rec.phone, guest_text)
         } else {
           console.warn(`No guest_text property set, not texting ${name} initial introduction`)
         }
+      } else {
+        rec.guest_welcomed = oldrec && oldrec.guest_welcomed
+      }
+      
+      if (!oldrec || !oldrec.cleaners_reminded) {
+        var site_name = properties.getProperty('site_name')
+        var cleaner_phone = properties.getProperty('cleaner_phone')
+        var cln_txt = `Cleaning reminder for ${site_name} on ${formatDate(rec.checkout)}. `
+        cln_txt += `There are ${rec.guests} staying ${formatDate(rec.checkin)} to ${formatDate(rec.checkout)}.`
+        rec.cleaners_reminded = send_sms(cleaner_phone, cln_txt)
+      } else {
+        rec.cleaners_reminded = oldrec && oldrec.cleaners_reminded
       }
       
       if (!oldrec || !oldrec.lock_scheduled) {
-        // Schedule lock code
-        schedule_lock(rec.name, rec.phone, rec.checkin, rec.checkout, rec.guests)
-        rec.lock_scheduled = true
+        rec.lock_scheduled = schedule_lock(rec.name, rec.phone, rec.checkin, rec.checkout, rec.guests)
+      } else {
+        rec.lock_scheduled = oldrec && oldrec.lock_scheduled
       }
+      
       properties.setProperty(rec.id, JSON.stringify(rec))
       
       if (rec.guest_welcomed && rec.lock_scheduled) {

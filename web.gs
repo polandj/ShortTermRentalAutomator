@@ -92,12 +92,15 @@ function saveReservation(formObject) {
   var event
   if (properties.getProperty('master_switch') == 'on' || 
       properties.getProperty('admin_phone') == phone) {
-    event = CalendarApp.getDefaultCalendar().createEvent(name, 
-                  start_date, stop_date, 
-                  {description: descr})
+    var defcal = CalendarApp.getDefaultCalendar()
+    event = defcal.createEvent(name, start_date, stop_date, 
+                               {description: descr})
     var mins_til_start = (start_date.getTime() - now.getTime())/1000/60
     event.addEmailReminder(Math.min(mins_til_start - 10, 10080)) // 1 week or a few minutes from now
     console.info("Created " + name + " calendar event: " + checkin + " - " + checkout)
+    // Creating the event doesn't trigger a calendar updated trigger?!...Do it manually
+    var cal = {calendarId: defcal.getId()}
+    calendarUpdated(cal)
   } else {
     console.info("[TESTING] Skipped creating " + name + " calendar event: " + checkin + " - " + checkout)
   }

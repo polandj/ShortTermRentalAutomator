@@ -15,7 +15,8 @@
        </div>
        
        <form class="column col-8 col-md-10 col-sm-12 col-mx-auto form-horizontal" onsubmit="handleFormSubmit(this)">
-         <?!= input_field('lock_manager_url', 'URL', 'url') ?>
+         <?!= input_field('lock_manager_url', 'URL', 'url', 
+                         {pattern: "https://.+api\\.smartthings\\.com/api/smartapps/installations/.+"}) ?>
          <?!= input_field('lock_manager_auth', 'Auth', 'text') ?>
        
          <?!= include('submit_form') ?>

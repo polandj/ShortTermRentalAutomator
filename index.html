@@ -25,6 +25,14 @@
          <h4>New Reservation</h4>
        </div>
        
+       <? if (properties.getProperty('master_switch') != 'on') { ?>
+       <div class="column col-8 col-md-10 col-sm-12 col-mx-auto">
+         <div class="toast">
+           Production mode off.  Most actions will not occur.
+         </div>
+       </div>
+       <? } ?>
+       
        <form class="column col-8 col-md-10 col-sm-12 col-mx-auto form-horizontal" onsubmit="handleReservationSubmit(this)">
          <?!= input_field('name', 'Name', 'text', {required:true}) ?>
          <?!= input_field('phone', 'Phone', 'tel', {required:true, pattern: "^\\+1[0-9]{10}$"}) ?>

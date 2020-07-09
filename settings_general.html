@@ -19,11 +19,25 @@
        <?!= input_field('checkout_time', 'Check-Out Time', 'time') ?>
        <?!= input_field('guest_text', 'Guest Text', 'textarea', 
            {maxlength: 160, hint: 'This is the first text sent to the guest, when the calendar notifies us of upcoming stay'}) ?>
-       <?!= input_field('mail_from', 'Email From', 'email') ?>
+
+       <? var aliases = GmailApp.getAliases() ?>
+       <? aliases.unshift(Session.getActiveUser().getEmail()) ?>
+       <div class="form-group">
+         <div class="col-3 col-sm-12">
+           <label class="form-label" for="mail_from">Mail From</label>
+         </div>
+         <div class="col-9 col-sm-12">
+           <select class="form-select" id="mail_from" name="mail_from">
+             <? for (var i = 0; i < aliases.length; i++) { ?>
+               <option value="<?= aliases[i] ?>" <?= properties.getProperty('mail_from') == aliases[i] ? "selected" : "" ?>><?= aliases[i] ?></option>
+             <? } ?>
+           </select>
+           <span class="form-input-hint">Add <a href="https://mail.google.com/mail/u/0/#settings/accounts" rel="noopener noreferrer" target="_blank">aliases in GMail</a> for other options</span>
+         </div>
+       </div>
+       
        <?!= input_field('email_signature', 'Email Signature', 'textarea') ?>
-       
        <?!= input_field('master_switch', 'Production', 'switch') ?>
-       
        <?!= include('submit_form') ?>
     </form>
     </div>
