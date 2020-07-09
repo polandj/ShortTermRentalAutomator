@@ -60,17 +60,17 @@ function processEvents(events, properties) {
           if (diff.checkout) {
             notify_cleaners("cal-upd-email", "Move cleaning", rec, oldrec)
             if (oldrec.lock_scheduled) {
-              edit_lock(oldrec.name, oldrec.phone, oldrec.checkin, oldrec.checkout, oldrec.guests)
+              edit_lock(rec.name, rec.phone, rec.checkin, rec.checkout, rec.guests)
             }
           }
         }
-        
       } else {
         console.log("New event[%s]: %s", event.id, event.summary)
         notify_cleaners("cal-new-email", "New cleaning", rec)
         // Don't add to lock now, this gets added to the lock later, when the calendar notification arrives
       }
-      properties.setProperty(event.id, JSON.stringify(rec))
+      // Use Object.assign to merge rec and oldrec into a new record 
+      properties.setProperty(event.id, JSON.stringify(Object.assign({}, oldrec, rec)))
     } else if (oldrec) {
       if (event.status === 'cancelled') {
         properties.deleteProperty(event.id)

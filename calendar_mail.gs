@@ -67,8 +67,6 @@ function parseCalendarMessages(messages)
         } else {
           console.warn(`No guest_text property set, not texting ${name} initial introduction`)
         }
-      } else {
-        rec.guest_welcomed = oldrec && oldrec.guest_welcomed
       }
       
       if (!oldrec || !oldrec.cleaners_reminded) {
@@ -77,17 +75,14 @@ function parseCalendarMessages(messages)
         var cln_txt = `Cleaning reminder for ${site_name} on ${formatDate(rec.checkout)}. `
         cln_txt += `There are ${rec.guests} staying ${formatDate(rec.checkin)} to ${formatDate(rec.checkout)}.`
         rec.cleaners_reminded = send_sms(cleaner_phone, cln_txt)
-      } else {
-        rec.cleaners_reminded = oldrec && oldrec.cleaners_reminded
       }
       
       if (!oldrec || !oldrec.lock_scheduled) {
         rec.lock_scheduled = schedule_lock(rec.name, rec.phone, rec.checkin, rec.checkout, rec.guests)
-      } else {
-        rec.lock_scheduled = oldrec && oldrec.lock_scheduled
       }
       
-      properties.setProperty(rec.id, JSON.stringify(rec))
+      // Use Object.assign to merge rec and oldrec into a new record 
+      properties.setProperty(rec.id, JSON.stringify(Object.assign({}, oldrec, rec)))
       
       if (rec.guest_welcomed && rec.lock_scheduled) {
         labelCalendarMessageDone(messages[m])
