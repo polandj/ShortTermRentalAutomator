@@ -30,15 +30,15 @@ function input_field(propname, proplabel, proptype, {
 /* The only accessible HTTP endpoint */
 function doGet(e) {
   var templ
-  if(e.queryString !== '') {  
-    templ = HtmlService.createTemplateFromFile(e.parameter.page)
+  if(e.parameters.page) {  
+    templ = HtmlService.createTemplateFromFile(e.parameters.page)
   } else {
     templ = HtmlService.createTemplateFromFile('index')
   }
   templ.home_url = ScriptApp.getService().getUrl()
   templ.properties = PropertiesService.getUserProperties()
   templ.gmail_addr = Session.getActiveUser().getEmail()
-  return templ.evaluate()
+  return templ.evaluate().setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
 }
 
 /* Called from index.html and vrbo_mail.gs to save a reservation */
