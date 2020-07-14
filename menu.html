@@ -1,6 +1,6 @@
 <header class="navbar" style="background-color: aliceblue">
   <section class="navbar-section">
-    <a href="<?= home_url ?>" class="btn btn-link">New</a>
+    <a onclick="loadPage('reservation')" class="btn btn-link">Reserve</a>
   </section>
   <section class="navbar-center">
     <b>730 Maplegate</b>
@@ -12,11 +12,11 @@
       </a>
         <!-- menu component -->
        <ul class="menu">
-         <li><a href="<?= home_url ?>?page=settings_general">General</a></li>
-         <li><a href="<?= home_url ?>?page=settings_admin">Admin</a></li>
-         <li><a href="<?= home_url ?>?page=settings_cleaners">Cleaners</a></li>
-         <li><a href="<?= home_url ?>?page=settings_twilio">Twilio</a></li>
-         <li><a href="<?= home_url ?>?page=settings_things">SmartThings</a></li>
+         <li><a onclick="loadPage('settings_general')">General</a></li>
+         <li><a onclick="loadPage('settings_admin')">Admin</a></li>
+         <li><a onclick="loadPage('settings_cleaners')">Cleaners</a></li>
+         <li><a onclick="loadPage('settings_twilio')">Twilio</a></li>
+         <li><a onclick="loadPage('settings_things')">SmartThings</a></li>
        </ul>
     </div>
   </section>

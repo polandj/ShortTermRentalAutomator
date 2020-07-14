@@ -34,6 +34,22 @@
     google.script.run.withSuccessHandler(handleResult).saveSettings(formObject)
   }
   
+  function handleReservationSubmit(formObject) {
+    var div = document.getElementById('output')
+    div.innerHTML = "Booking..."
+    google.script.run.withSuccessHandler(handleResult).saveReservation(formObject)
+  }
+    
+  function loadPage(page) {
+    console.log(`Load page ${page}`)
+    var container = document.getElementById('container')
+    container.innerHTML = '<div class="loading loading-lg">Loading...</div>'
+    google.script.run.withSuccessHandler(htmlFragment => {
+      container.innerHTML = htmlFragment
+      preventFormSubmit()
+    }).getHtml(page)
+  }
+  
   function handleResult(result) {
     var div = document.getElementById('output')
     if (result.status == 'error') {

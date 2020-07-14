@@ -9,6 +9,8 @@
 function include(filename) {
   var templ = HtmlService.createTemplateFromFile(filename)
   templ.home_url = ScriptApp.getService().getUrl()
+  templ.properties = PropertiesService.getUserProperties()
+  templ.gmail_addr = Session.getActiveUser().getEmail()
   return templ.evaluate().getContent()
 }
 
@@ -27,14 +29,17 @@ function input_field(propname, proplabel, proptype, {
   return templ.evaluate().getContent()
 }
 
+function getHtml(page) {
+  var templ =  HtmlService.createTemplateFromFile(page)
+  templ.home_url = ScriptApp.getService().getUrl()
+  templ.properties = PropertiesService.getUserProperties()
+  templ.gmail_addr = Session.getActiveUser().getEmail()
+  return templ.evaluate().getContent()
+}
+
 /* The only accessible HTTP endpoint */
 function doGet(e) {
-  var templ
-  if(e.parameters.page) {  
-    templ = HtmlService.createTemplateFromFile(e.parameters.page)
-  } else {
-    templ = HtmlService.createTemplateFromFile('index')
-  }
+  var templ =  HtmlService.createTemplateFromFile(e.parameter.page || 'index')
   templ.home_url = ScriptApp.getService().getUrl()
   templ.properties = PropertiesService.getUserProperties()
   templ.gmail_addr = Session.getActiveUser().getEmail()

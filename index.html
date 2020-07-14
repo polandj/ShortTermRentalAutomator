@@ -3,47 +3,17 @@
  <head>
    <meta charset="utf-8">
    <!-- This site is responsive. Use full screen width. -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <base target="_self">
-  <?!= include('styles') ?>
-  <?!= include('scripts') ?>
-  <script>
-    function handleReservationSubmit(formObject) {
-      var div = document.getElementById('output')
-      div.innerHTML = "Booking..."
-      google.script.run.withSuccessHandler(handleResult).saveReservation(formObject);
-    }
-   </script>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <base target="_top">
+   <?!= include('styles') ?>
+   <?!= include('scripts') ?>
  </head>
- <body>
+ <body id="body">
    
    <?!= include('menu') ?>
    
-   <div class="container">
-     <div class="columns">
-       <div class="column col-12 text-center">
-         <h4>New Reservation</h4>
-       </div>
-       
-       <? if (properties.getProperty('master_switch') != 'on') { ?>
-       <div class="column col-8 col-md-10 col-sm-12 col-mx-auto">
-         <div class="toast">
-           Production mode off.  Most actions will not occur.
-         </div>
-       </div>
-       <? } ?>
-       
-       <form class="column col-8 col-md-10 col-sm-12 col-mx-auto form-horizontal" onsubmit="handleReservationSubmit(this)">
-         <?!= input_field('name', 'Name', 'text', {required:true}) ?>
-         <?!= input_field('phone', 'Phone', 'tel', {required:true, pattern: "^\\+1[0-9]{10}$"}) ?>
-         <?!= input_field('guests', 'Guests', 'text', {required:true, pattern: "^[0-9] adults.*$"}) ?>
-         <?!= input_field('checkin', 'Check-In', 'date', {required:true}) ?>
-         <?!= input_field('checkout', 'Check-Out', 'date', {required:true}) ?>
-  
-         <?!= include('submit_form') ?>
-       </form>
-    </div>
-  </div>
- 
+   <div class="container" id="container">
+     <?!= include('reservation') ?>
+   </div>
  </body>
 </html>
