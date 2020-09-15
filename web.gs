@@ -61,10 +61,23 @@ function saveReservation(formObject) {
     return {status: "error", reason: "Invalid phone"}
   }
   phone = "+1" + phone.replace(/\D/g, '').slice(-10)
+  // Dates need to be in yyyy-MM-dd format
   var start_date = new Date(checkin + "T00:00:00")
+  if (!start_date || !start_date.valueOf()) {
+    var tz = CalendarApp.getDefaultCalendar().getTimeZone()
+    var ddv = new Date(checkin)
+    var fmted = Utilities.formatDate(ddv, tz, 'yyyy-MM-dd')
+    start_date = new Date(fmted + "T00:00:00")
+  }
   var stop_date = new Date(checkout + "T00:00:00")
+  if (!stop_date || !stop_date.valueOf()) {
+    var tz = CalendarApp.getDefaultCalendar().getTimeZone()
+    var ddv = new Date(checkout)
+    var fmted = Utilities.formatDate(ddv, tz, 'yyyy-MM-dd')
+    stop_date = new Date(fmted + "T00:00:00")
+  }
   var now = new Date()
-  if (now > start_date || now > stop_date || start_date >= stop_date) {
+  if (!start_date.valueOf() || !stop_date.valueOf() || now > start_date || now > stop_date || start_date >= stop_date) {
     return {status: "error", reason: "Invalid dates"}
   }
   var properties = PropertiesService.getUserProperties()
@@ -84,6 +97,23 @@ function saveReservation(formObject) {
   } else {
     stop_date.setHours(11) // Default: 11am
   }
+  // Sort out cleaners
+  var cleaner = formObject.cleaner
+  var cleaner_phone = ""
+  var cleaner_email = ""
+  if (!cleaner) {
+    // If no cleaner sent, use the default cleaner phone
+    cleaner_phone = properties.getProperty('cleaner_phone')
+    cleaner_email = properties.getProperty('cleaner_email')
+  } else {
+    if (cleaner == properties.getProperty('cleaner_name')) {
+      cleaner_phone = properties.getProperty('cleaner_phone')
+      cleaner_email = properties.getProperty('cleaner_email')
+    } else if (cleaner == properties.getProperty('cleaner_name_1')) {
+      cleaner_phone = properties.getProperty('cleaner_phone_1')
+      cleaner_email = properties.getProperty('cleaner_email_1')
+    }
+  }
   
   // Check for conflicting reservations
   var events = CalendarApp.getDefaultCalendar().getEvents(start_date, stop_date)
@@ -92,7 +122,7 @@ function saveReservation(formObject) {
   }
   
   // Create calendar entry
-  var descr = `Guests: ${guests}\r\nPhone: ${phone}`
+  var descr = `Guests: ${guests}\r\nPhone: ${phone}\r\nCleaner_Email: ${cleaner_email}\r\nCleaner_Phone: ${cleaner_phone}`
   var properties = PropertiesService.getUserProperties()
   var event
   if (properties.getProperty('master_switch') == 'on' || 
@@ -108,6 +138,7 @@ function saveReservation(formObject) {
     calendarUpdated(cal)
   } else {
     console.info("[TESTING] Skipped creating " + name + " calendar event: " + checkin + " - " + checkout)
+    console.info(`[TESTING] ${start_date} - ${stop_date}`) 
   }
   return {status: "booked", event: event ? event.getId() : "", name: name, 
           phone: phone, guests: guests, checkin: checkin, checkout: checkout}

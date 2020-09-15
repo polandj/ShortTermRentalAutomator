@@ -32,6 +32,7 @@ function getNewCalendarMessages()
 
 function parseCalendarMessages(messages)
 {
+  var properties = PropertiesService.getUserProperties()
   var records=[];
   for(var m=0;m<messages.length;m++)
   {
@@ -49,6 +50,10 @@ function parseCalendarMessages(messages)
                                        start_time[4], start_time[5], start_time[6]))
       rec.checkout = new Date(Date.UTC(end_time[1], end_time[2]-1, end_time[3], 
                                      end_time[4], end_time[5], end_time[6]))
+      var cleaner_email = description.match(/Cleaner_Email:\s*(.*)/)
+      var cleaner_phone = description.match(/Cleaner_Phone:\s*(.*)/)
+      rec.cleaner_email = cleaner_email ? cleaner_email[1].trim() : properties.getProperty('cleaner_email')
+      rec.cleaner_phone = cleaner_phone ? cleaner_phone[1].trim() : properties.getProperty('cleaner_phone')
     } catch(err) {
       console.error("Error parsing calendar message: " + err)
       console.info(body)
@@ -74,11 +79,12 @@ function parseCalendarMessages(messages)
         var cleaner_phone = properties.getProperty('cleaner_phone')
         var cln_txt = `Cleaning reminder for ${site_name} on ${formatDate(rec.checkout)}. `
         cln_txt += `There are ${rec.guests} staying ${formatDate(rec.checkin)} to ${formatDate(rec.checkout)}.`
-        rec.cleaners_reminded = send_sms(cleaner_phone, cln_txt)
+        rec.cleaners_reminded = send_sms(rec.cleaner_phone, cln_txt)
       }
       
       if (!oldrec || !oldrec.lock_scheduled) {
-        rec.lock_scheduled = schedule_lock(rec.name, rec.phone, rec.checkin, rec.checkout, rec.guests)
+        rec.lock_scheduled = schedule_lock(rec.name, rec.phone, rec.checkin, rec.checkout, 
+                                           rec.guests, rec.cleaner_phone)
       }
       
       // Use Object.assign to merge rec and oldrec into a new record 

@@ -36,6 +36,7 @@ function parseVRBOMessages(messages)
   var records=[];
   for(var m=0;m<messages.length;m++)
   {
+    var from = messages[m].getFrom()
     var text = messages[m].getPlainBody()
     
     var dates = text.match(/Dates:[\r\n]+[ ]+([\w]+) ([\d]+)[ ]?-[ ]?([\w]+) ([\d]+),[ ]?([\d]{4})/m)
@@ -53,15 +54,21 @@ function parseVRBOMessages(messages)
       // Basic validation
       var valid_start = new Date(rec.checkin).valueOf() ? true : false
       var valid_stop = new Date(rec.checkout).valueOf() ? true : false
-      if (valid_start && valid_stop && rec.phone.length == 12) {
+      var valid_name = !(rec.name === "null null")
+      if (valid_start && valid_stop && valid_name && rec.phone.length == 12) {
         var result = saveReservation(rec)
-        if (result && result.status == "booked") {
-          labelVRBOMessageDone(messages[m])
+        if (result) {
+          if (result.status == "booked") {
+            labelVRBOMessageDone(messages[m])
+            records.push(rec)
+          } else {
+            console.error(`Error saving reservation: ${result.reason} (${JSON.stringify(rec)})`)
+          }
         }
-        records.push(rec)
       }
     } else {
       console.error("Error parsing VRBO message!")
+      console.info(from)
       console.info(text)
     }
   }

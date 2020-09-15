@@ -15,6 +15,22 @@
     <?!= input_field('guests', 'Guests', 'text', {required:true, pattern: "^[0-9] adults.*$"}) ?>
     <?!= input_field('checkin', 'Check-In', 'date', {required:true}) ?>
     <?!= input_field('checkout', 'Check-Out', 'date', {required:true}) ?>
+    
+    <? var cleaners = ['None'] ?>
+    <? if (properties.getProperty('cleaner_name_1') ) {cleaners.unshift(properties.getProperty('cleaner_name_1'))} ?>
+    <? if (properties.getProperty('cleaner_name') ) {cleaners.unshift(properties.getProperty('cleaner_name'))} ?>
+    <div class="form-group">
+      <div class="col-3 col-sm-12">
+        <label class="form-label" for="mail_from">Cleaners</label>
+      </div>
+      <div class="col-9 col-sm-12">
+        <select class="form-select" id="cleaner" name="cleaner">
+          <? for (var i = 0; i < cleaners.length; i++) { ?>
+            <option value="<?= cleaners[i] ?>"><?= cleaners[i] ?></option>
+          <? } ?>
+        </select>
+      </div>
+    </div>
 
     <?!= include('submit_form') ?>
   </form>

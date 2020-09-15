@@ -24,8 +24,11 @@ function prune_reservations() {
       try {
         var rec = JSON.parse(keyval)
         if (rec.checkout && Date.parse(rec.checkout) < now) {
+          //cancel_lock(rec.phone)
           properties.deleteProperty(keys[i])
           console.info(`Removed old event property ${keys[i]}: ${rec.name}`)
+        } else if (rec.checkout && ((Date.parse(rec.checkout) - now.valueOf())/1000/86400) < 4) {
+          console.info(`XXX - TODO - Remind cleaners a few days before checkout (${rec.name})`)
         } else if (!rec.checkout) {
           console.warn(`Event with no checkout? ${keys[i]}: ${JSON.stringify(rec)}`)
           properties.deleteProperty(keys[i])
@@ -57,6 +60,7 @@ function send_email(to, subject, txt, htm) {
       options.htmlBody = htm
     }
     GmailApp.sendEmail(to, subject, txt, options)
+    console.info(`Sent mail to ${to}: ${subject}`)
     retval = true
   } else {
     console.info('[TESTING] Skipped sending mail to ' + to + ': ' + subject)
@@ -146,32 +150,35 @@ function call_lock(uri, data) {
     var response = UrlFetchApp.fetch(lm_url, options)
     console.log("lock manager response code: " + response.getResponseCode())
     if (response.getResponseCode() == 201) {
+      console.info(`Lock scheduled for ${JSON.stringify(data)}`)
       retval = true 
     }
   } else {
-    console.log(`[TESTING] Skipped calling lock api for ${JSON.stringify(data)}`)
+    console.info(`[TESTING] Skipped calling lock api for ${JSON.stringify(data)}`)
   }
   return retval
 }
   
-function schedule_lock(name, phone, checkin, checkout, guests) {
+function schedule_lock(name, phone, checkin, checkout, guests, cleaner_phone) {
   var data = {
     "name": name,
     "phone": phone,
     "checkin": formatDate(checkin),
     "checkout": formatDate(checkout),
-    "guests": guests
+    "guests": guests,
+    "cleaner_phone": cleaner_phone
   }
   return call_lock('/reservation', data)
 }
 
-function edit_lock(name, phone, checkin, checkout, guests) {
+function edit_lock(name, phone, checkin, checkout, guests, cleaner_phone) {
   var data = {
     "name": name,
     "phone": phone,
     "checkin": formatDate(checkin),
     "checkout": formatDate(checkout),
-    "guests": guests
+    "guests": guests,
+    "cleaner_phone": cleaner_phone
   }
   return call_lock('/edit', data)
 }

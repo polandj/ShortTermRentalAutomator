@@ -4,9 +4,11 @@
  * Deal with changes to the calendar
  * ======================================
  */
-function parseEvent(event) {
+function parseEvent(event, properties) {
   var guests = event.description ? event.description.match(/Guests: (.+)/) : ""
   var phone = event.description ? event.description.match(/Phone: (.+)/) : ""
+  var cleaner_email = event.description ? event.description.match(/Cleaner_Email: (.*)/) : ""
+  var cleaner_phone = event.description ? event.description.match(/Cleaner_Phone: (.*)/) : ""
   if (phone && guests) {
     var rec = {}
     rec.id = event.id
@@ -15,6 +17,10 @@ function parseEvent(event) {
     rec.checkout = event.end.dateTime
     rec.phone = "+1" + phone[1].replace(/\D/g, '').slice(-10)
     rec.guests = guests[1]
+    
+    // Sort out cleaners
+    rec.cleaner_email = cleaner_email ? cleaner_email[1].trim() : properties.getProperty('cleaner_email')
+    rec.cleaner_phone = cleaner_phone ? cleaner_phone[1].trim() : properties.getProperty('cleaner_phone')
     
     // Only care about future events
     var now = new Date()
@@ -48,7 +54,7 @@ function compareRecords(oldrec, newrec) {
 function processEvents(events, properties) {
   for (var i = 0; i < events.items.length; i++) {
     var event = events.items[i]
-    var rec = parseEvent(event)
+    var rec = parseEvent(event, properties)
     var oldjson = properties.getProperty(event.id)
     var oldrec = oldjson ? JSON.parse(oldjson) : null
     if (rec) {
@@ -99,8 +105,7 @@ function notify_cleaners(template, subject, rec, oldrec) {
   
   var htmlcontent = "<!DOCTYPE html><html><body>" + content.replace(/\n/g, '<br>') + "</body></html>"
   
-  var to = properties.getProperty('cleaner_email')
-  send_email(to, subject, content, htmlcontent)
+  send_email(rec.cleaner_email, subject, content, htmlcontent)
 }
 
 function calendarUpdated(e) {

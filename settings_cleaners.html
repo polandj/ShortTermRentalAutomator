@@ -5,8 +5,18 @@
        </div>
        
        <form class="column col-8 col-md-10 col-sm-12 col-mx-auto form-horizontal" onsubmit="handleFormSubmit(this)">
+         
+         <div class="divider text-center" data-content="Primary"></div>
+       
+         <?!= input_field('cleaner_name', 'Name', 'text') ?>
          <?!= input_field('cleaner_email', 'Email', 'email') ?>
          <?!= input_field('cleaner_phone', 'Phone', 'tel', {pattern: "^\\+1[0-9]{10}$"}) ?>
+         
+         <div class="divider text-center" data-content="Secondary"></div>
+         
+         <?!= input_field('cleaner_name_1', 'Name', 'text') ?>
+         <?!= input_field('cleaner_email_1', 'Email', 'email') ?>
+         <?!= input_field('cleaner_phone_1', 'Phone', 'tel', {pattern: "^\\+1[0-9]{10}$"}) ?>
          
          <?!= include('submit_form') ?>
         </form>
